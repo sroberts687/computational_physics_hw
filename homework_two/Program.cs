@@ -37,6 +37,7 @@ namespace homework_two
             // three dimensional array grid will hold grid points and function values
             double[,,] grid = new double[dimx, dimy, 4]; 
 
+            
             for (int i = minx; i <= maxx; i++)
             {
                 for (int j = miny; j <= maxy; j++)
@@ -44,7 +45,8 @@ namespace homework_two
                     grid[i, j, 0] = minx + i;  // x coordinate
                     grid[i, j, 1] = miny + i;  // y coodrinate
 
-                    grid[i, j, 2] = funct(grid[i, j, 0], grid[i, j, 1]);
+                    grid[i, j, 2] = functx(grid[i, j, 0], grid[i, j, 1]);  // f_x(x,y)
+                    grid[i, j, 3] = functy(grid[i, j, 0], grid[i, j, 1]);  // f_y(x,y)
 
                 }
             }
@@ -59,6 +61,21 @@ namespace homework_two
             Console.WriteLine("\n Press any key to exit.");
             Console.ReadKey();
 
+        }
+
+        private static double functy(double x, double y)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static double functx(double x, double y)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static double funct(double v1, double v2)
+        {
+            throw new NotImplementedException();
         }
     }
 }
