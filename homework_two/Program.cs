@@ -45,13 +45,16 @@ namespace homework_two
                     grid[i, j, 0] = minx + i;  // x coordinate
                     grid[i, j, 1] = miny + i;  // y coodrinate
 
-                    grid[i, j, 2] = functx(grid[i, j, 0], grid[i, j, 1]);  // f_x(x,y)
-                    grid[i, j, 3] = functy(grid[i, j, 0], grid[i, j, 1]);  // f_y(x,y)
+                    grid[i, j, 2] = Functx(grid[i, j, 0], grid[i, j, 1]);  // f_x(x,y)
+                    grid[i, j, 3] = Functy(grid[i, j, 0], grid[i, j, 1]);  // f_y(x,y)
 
                 }
             }
 
-             
+            // TODO: generate contour plots
+            // TODO: generate vector plot
+
+
 
 
             int k = FindMax(1, 2);
@@ -63,17 +66,17 @@ namespace homework_two
 
         }
 
-        private static double functy(double x, double y)
+        private static double Functy(double x, double y)
         {
             throw new NotImplementedException();
         }
 
-        private static double functx(double x, double y)
+        private static double Functx(double x, double y)
         {
             throw new NotImplementedException();
         }
 
-        private static double funct(double v1, double v2)
+        private static double Funct(double v1, double v2)
         {
             throw new NotImplementedException();
         }
