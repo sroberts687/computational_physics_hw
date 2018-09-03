@@ -185,7 +185,14 @@ namespace homework_two
             return Math.Cos(x);
         }
 
+        // derivative of L(x)
+        private static double Lderiv(double v)
+        {
+            throw new NotImplementedException();
+        }
+
         // returns slope, according to funtion F
+        // TODO: CHECK THIS!!!
         private static double Secant(double pm1, double pm2)
         {
 
@@ -251,7 +258,7 @@ namespace homework_two
             // initial conditions
             pValuesN[0] = min + (max - min) / 2;
             fpValuesN[0] = L(min + (max - min) / 2);
-            fprimeValuesN[0] = Fprime(min + (max - min) / 2);
+            fprimeValuesN[0] = Lderiv(min + (max - min) / 2);
 
             // optional output
             //Console.WriteLine("0" + "\t" + pValuesN[0]);
@@ -262,8 +269,8 @@ namespace homework_two
             {
                 pValuesN[i] = pValuesN[i - 1]
                   - (fpValuesN[i - 1] / fprimeValuesN[i - 1]);
-                fpValuesN[i] = F(pValuesN[i]);
-                fprimeValuesN[i] = Fprime(pValuesN[i]);
+                fpValuesN[i] = L(pValuesN[i]);
+                fprimeValuesN[i] = Lderiv(pValuesN[i]);
 
                 // optional output
                 //Console.WriteLine(i + "\t" + pValuesN[i]);
@@ -276,8 +283,7 @@ namespace homework_two
             return 0;
         }
 
-
-    }
+        }
 }
 
 
