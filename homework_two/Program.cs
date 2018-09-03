@@ -19,6 +19,10 @@ namespace homework_two
             public static double M2 = -1;  // Modifiable
             public static double sep = -1; // Modifiable
 
+            // search range for iterative methods
+            public static double min = -700;
+            public static double max = 700;
+
         }
 
         /* Main program defines grid size and asks for user to input values for M1, M2,
@@ -102,9 +106,10 @@ namespace homework_two
             // TODO: generate vector plot
 
 
+            // part 3
+            Console.WriteLine("Part (3)");
 
-            int k = FindMax(1, 2);
-            Console.WriteLine(k);
+
 
             // keep window open
             Console.WriteLine("\n Press any key to exit.");
@@ -173,6 +178,104 @@ namespace homework_two
                 return a;
             }
         }
+
+        private static double L(double x)
+        {
+            // TODO: assign this properly for part (3)
+            return Math.Cos(x);
+        }
+
+        // returns slope, according to funtion F
+        private static double Secant(double pm1, double pm2)
+        {
+
+            return pm1 - (L(pm1) * (pm1 - pm2)) / (L(pm1) - L(pm2));
+        }
+
+        private static double DoSecant()
+        {
+            // pull global range into local instance
+            double min = Globals.min;
+            double max = Globals.max;
+            
+
+            int i = 2;  // initialize step counter to two b/c we do first two iterations outside the loop
+            double p = min + (max - min) / 2;
+            double f = L(p);
+            double tol = 0.0001;
+            int maxIt = 50;
+
+
+            double[] pValuesS = new double[maxIt];
+            double[] fpValuesS = new double[maxIt];
+
+            // initial conditions
+            fpValuesS[0] = 1.5;
+            fpValuesS[1] = Secant(min + (max - min) / 2, fpValuesS[0]);
+
+            // optional output
+            //Console.WriteLine(0 + "\t" + fpValuesS[0]);
+            //Console.WriteLine(1 + "\t" + fpValuesS[1]);
+
+            do
+            {
+
+                fpValuesS[i] = Secant(fpValuesS[i - 1], fpValuesS[i - 2]);
+
+                //optional output
+                // Console.WriteLine(i + "\t" + fpValuesS[i]);
+
+                i++;
+
+            } while (Math.Abs(fpValuesS[i - 1] - fpValuesS[i - 2]) > tol
+              && i < maxIt - 1);
+
+            return fpValuesS[i];
+        }
+
+        private static double DoNewtons()
+        {
+            int i = 0;
+            int maxIt = 50;
+            double tol = 0.0001;
+            double min = Globals.min;
+            double max = Globals.max;
+            
+            // function outputs
+            double[] fpValuesN = new double[maxIt];
+            // function inputs
+            double[] pValuesN = new double[maxIt];
+            // derivatives of function outputs
+            double[] fprimeValuesN = new double[maxIt];
+
+            // initial conditions
+            pValuesN[0] = min + (max - min) / 2;
+            fpValuesN[0] = L(min + (max - min) / 2);
+            fprimeValuesN[0] = Fprime(min + (max - min) / 2);
+
+            // optional output
+            //Console.WriteLine("0" + "\t" + pValuesN[0]);
+
+            i++;
+
+            do
+            {
+                pValuesN[i] = pValuesN[i - 1]
+                  - (fpValuesN[i - 1] / fprimeValuesN[i - 1]);
+                fpValuesN[i] = F(pValuesN[i]);
+                fprimeValuesN[i] = Fprime(pValuesN[i]);
+
+                // optional output
+                //Console.WriteLine(i + "\t" + pValuesN[i]);
+
+                i++;
+
+            } while (Math.Abs(pValuesN[i - 1] - pValuesN[i - 2]) > tol
+              && i < maxIt - 1);
+
+            return 0;
+        }
+
 
     }
 }
