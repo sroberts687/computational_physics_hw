@@ -55,12 +55,12 @@ namespace homework_two
             {
                 for (int j = miny; j <= maxy; j++)
                 {
-                    grid[i, j, 0] = minx + i;  // r coordinate
-                    grid[i, j, 1] = miny + i;  // theta coodrinate
+                    grid[i, j, 0] = minx + i;  // x coordinate
+                    grid[i, j, 1] = miny + i;  // y coodrinate
 
                     // Funct will calculate the effective gravity for a point
-                    grid[i, j, 2] = FunctR(grid[i, j, 0], grid[i, j, 1]);  // f_r(r,theta)
-                    grid[i, j, 3] = FunctTheta(grid[i, j, 0], grid[i, j, 1]);  // f_theta(r,theta)
+                    grid[i, j, 2] = FunctX(grid[i, j, 0], grid[i, j, 1]);  // f_x(x,y)
+                    grid[i, j, 3] = FunctY(grid[i, j, 0], grid[i, j, 1]);  // f_y(x,y)
 
                     grid[i, j, 4] = Potential(grid[i, j, 0], grid[i, j, 1]); // potential(r,theta)
 
@@ -145,19 +145,19 @@ namespace homework_two
             }
         }
 
-        private static double Potential(double r, double theta)
+        private static double Potential(double x, double y)
         {
             return (-1 * Globals.G * Globals.M1 * Globals.M2 ) / r;
 
             //throw new NotImplementedException();
         }
 
-        private static double FunctR(double r, double theta)
+        private static double FunctX(double x, double y)
         {
             throw new NotImplementedException();
         }
 
-        private static double FunctTheta(double r, double theta)
+        private static double FunctY(double x, double y)
         {
             throw new NotImplementedException();
         }
