@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
+
 namespace homework_two
 {
     class Program
@@ -23,6 +24,10 @@ namespace homework_two
             public static double min = -700;
             public static double max = 700;
 
+            // position of m1 and m2, respectively
+            // current code written st x1 = 0 and x2 = sep
+            internal static int x1;
+            internal static double x2;
         }
 
         /* Main program defines grid size and asks for user to input values for M1, M2,
@@ -38,25 +43,27 @@ namespace homework_two
             getInput();
 
             // initalize grid
-            int minx = -100;
-            int maxx = 100;
+            int minx = -200;
+            int maxx = 200;
             int miny = -200;
             int maxy = 200;
 
             // dimensions used to construct array to hold grid
-            int dimx = minx - maxx + 1;
-            int dimy = miny - maxy + 1;
+            int dimx = Math.Abs(minx) + Math.Abs(maxx) + 1;
+            int dimy = Math.Abs(miny) + Math.Abs(maxy) + 1;
 
             // three dimensional array grid will hold grid points and function values
-            double[,,] grid = new double[dimx, dimy, 5]; 
+            double[,,] grid = new double[dimx, dimy, 5];
+
+            Console.WriteLine("instantiated grid");
 
             
-            for (int i = minx; i <= maxx; i++)
+            for (int i = 0; i <= dimx; i++)
             {
-                for (int j = miny; j <= maxy; j++)
+                for (int j = 0; j <= dimy; j++)
                 {
                     grid[i, j, 0] = minx + i;  // x coordinate
-                    grid[i, j, 1] = miny + i;  // y coodrinate
+                    grid[i, j, 1] = miny + j;  // y coodrinate
 
                     // Funct will calculate the effective gravity for a point
                     grid[i, j, 2] = FunctX(grid[i, j, 0], grid[i, j, 1]);  // f_x(x,y)
@@ -143,18 +150,23 @@ namespace homework_two
                 Globals.M1 = Globals.M2;
                 Globals.M2 = temp;
             }
+
+            // M1 >= M2, assign locations
+            Globals.x1 = 0;
+            Globals.x2 = Globals.sep;
+
         }
 
         private static double Potential(double x, double y)
         {
-            return (-1 * Globals.G * Globals.M1 * Globals.M2 ) / r;
+            return (-1 * Globals.G * Globals.M1 * Globals.M2 ) / Globals.sep;
 
             //throw new NotImplementedException();
         }
 
         private static double FunctX(double x, double y)
         {
-            throw new NotImplementedException();
+            return (Globals.G * Globals.M1) / (x * x + y * y);
         }
 
         private static double FunctY(double x, double y)
