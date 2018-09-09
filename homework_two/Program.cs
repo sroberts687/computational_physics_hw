@@ -43,10 +43,10 @@ namespace homework_two
             getInput();
 
             // initalize grid
-            int minx = -200;
-            int maxx = 200;
-            int miny = -200;
-            int maxy = 200;
+            int minx = -5;
+            int maxx = 5;
+            int miny = -4;
+            int maxy = 4;
 
             // dimensions used to construct array to hold grid
             int dimx = Math.Abs(minx) + Math.Abs(maxx) + 1;
@@ -58,9 +58,9 @@ namespace homework_two
             Console.WriteLine("instantiated grid");
 
             
-            for (int i = 0; i <= dimx; i++)
+            for (int i = 0; i < dimx; i++)
             {
-                for (int j = 0; j <= dimy; j++)
+                for (int j = 0; j < dimy; j++)
                 {
                     grid[i, j, 0] = minx + i;  // x coordinate
                     grid[i, j, 1] = miny + j;  // y coodrinate
@@ -76,12 +76,11 @@ namespace homework_two
 
             // output the x,y component of the acceleration at each grid point
             Console.WriteLine("x,y component of the acceleration at each grid point:");
-            for (int i = minx; i <= maxx; i++)
+            for (int i = 0; i < dimx; i++)
             {
-                for (int j = miny; j <= maxy; j++)
+                for (int j = 0; j < dimy; j++)
                 {
-                    // print the effective gravity in the format (a_r, a_theta)
-                    // TODO: convert to (a_x, a_y)
+                    // print the effective gravity in the format (a_x, a_y)
                     Console.Write("( {0} , {1} ) \t", grid[i, j, 2], grid[i, j, 3]);
 
                     if (j == maxy)
@@ -94,9 +93,9 @@ namespace homework_two
 
             // output the potential for each grid point
             Console.WriteLine("potential for each grid point: ");
-            for (int i = minx; i <= maxx; i++)
+            for (int i = 0; i < dimx; i++)
             {
-                for (int j = miny; j <= maxy; j++)
+                for (int j = 0; j < dimy; j++)
                 {
                     Console.Write("{0} \t", grid[i, j, 4]);
                     if (j == maxy)
@@ -107,6 +106,7 @@ namespace homework_two
             }
 
             // part 2
+            Console.WriteLine();
             Console.WriteLine("Part (2)");
 
             // TODO: generate contour plots
@@ -114,11 +114,13 @@ namespace homework_two
 
 
             // part 3
+            Console.WriteLine();
             Console.WriteLine("Part (3)");
 
 
 
             // keep window open
+            Console.WriteLine();
             Console.WriteLine("\n Press any key to exit.");
             Console.ReadKey();
 
@@ -138,11 +140,9 @@ namespace homework_two
                 Globals.M2 = Convert.ToDouble(Console.ReadLine());
             }
 
-            while (Globals.M2 < 0)
-            {
-                Console.WriteLine("enter a value for seperation between M1 and M2");
-                Globals.sep = Convert.ToDouble(Console.ReadLine());
-            }
+            Console.WriteLine("enter a value for seperation between M1 and M2");
+            Globals.sep = Convert.ToDouble(Console.ReadLine());
+            
 
             if (Globals.M1 <= Globals.M2)
             {
@@ -159,19 +159,33 @@ namespace homework_two
 
         private static double Potential(double x, double y)
         {
-            return (-1 * Globals.G * Globals.M1 * Globals.M2 ) / Globals.sep;
+            double U1 = (-1 * Globals.G * Globals.M1 * Globals.M2) / Math.Sqrt(x * x + y * y); 
+            double U2 = (-1 * Globals.G * Globals.M1 * Globals.M2) / Math.Sqrt(((x - Globals.sep) * (x - Globals.sep) + y * y));
 
-            //throw new NotImplementedException();
+            return U1 + U2;
         }
 
         private static double FunctX(double x, double y)
         {
-            return (Globals.G * Globals.M1) / (x * x + y * y);
+            double F1 = (Globals.G * Globals.M1) / (x * x + y * y);
+            double F2 = (Globals.G * Globals.M2) / ( (x - Globals.sep) * (x - Globals.sep) + y * y);
+
+            F1 *= (x / Math.Sqrt(x * x + y * y));
+            F2 *= ((x - Globals.sep) / Math.Sqrt((x - Globals.sep) * (x - Globals.sep) + y * y));
+
+            return F1 + F2;
+
         }
 
         private static double FunctY(double x, double y)
         {
-            throw new NotImplementedException();
+            double F1 = (Globals.G * Globals.M1) / (x * x + y * y);
+            double F2 = (Globals.G * Globals.M2) / ((x - Globals.sep) * (x - Globals.sep) + y * y);
+
+            F1 *= (y / Math.Sqrt(x * x + y * y));
+            F2 *= (y / Math.Sqrt(x * x + y * y));
+
+            return F1 + F2;
         }
 
         private static double Funct(double v1, double v2)
