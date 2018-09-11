@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+
 
 
 
@@ -18,6 +20,7 @@ namespace homework_two
             public const double PI = 3.1415926;  // Unmodifiable
             public static double M1 = -1;  // Modifiable
             public static double M2 = -1;  // Modifiable
+            public static double M = -1;
             public static double sep = -1; // Modifiable
 
             // search range for iterative methods
@@ -26,9 +29,10 @@ namespace homework_two
 
             // position of m1 and m2, respectively
             // current code written st x1 = 0 and x2 = sep
-            internal static int x1;
+            internal static double x1;
             internal static double x2;
         }
+
 
         /* Main program defines grid size and asks for user to input values for M1, M2,
          * and seperation distance */
@@ -43,14 +47,17 @@ namespace homework_two
             getInput();
 
             // initalize grid
-            int minx = -5;
-            int maxx = 5;
-            int miny = -4;
-            int maxy = 4;
+            int minx = -2;
+            int maxx = 2;
+            int miny = -2;
+            int maxy = 2;
+            double step = 0.1;
 
             // dimensions used to construct array to hold grid
-            int dimx = Math.Abs(minx) + Math.Abs(maxx) + 1;
-            int dimy = Math.Abs(miny) + Math.Abs(maxy) + 1;
+            int dimx = Math.Abs(minx) + Math.Abs(maxx);
+            dimx *= 10; // 1/step = 10
+            int dimy = Math.Abs(miny) + Math.Abs(maxy);
+            dimy *= 10;
 
             // three dimensional array grid will hold grid points and function values
             double[,,] grid = new double[dimx, dimy, 5];
@@ -62,45 +69,75 @@ namespace homework_two
             {
                 for (int j = 0; j < dimy; j++)
                 {
-                    grid[i, j, 0] = minx + i;  // x coordinate
-                    grid[i, j, 1] = miny + j;  // y coodrinate
+                    grid[i, j, 0] = minx + i*step;  // x coordinate
+                    grid[i, j, 1] = miny + j*step;  // y coodrinate
 
                     // Funct will calculate the effective gravity for a point
-                    grid[i, j, 2] = FunctX(grid[i, j, 0], grid[i, j, 1]);  // f_x(x,y)
-                    grid[i, j, 3] = FunctY(grid[i, j, 0], grid[i, j, 1]);  // f_y(x,y)
+                    grid[i, j, 2] = FunctX(grid[i, j, 0], grid[i, j, 1]);  // g_x(x,y)
+                    grid[i, j, 3] = FunctY(grid[i, j, 0], grid[i, j, 1]);  // g_y(x,y)
 
-                    grid[i, j, 4] = Potential(grid[i, j, 0], grid[i, j, 1]); // potential(r,theta)
+                    grid[i, j, 4] = Potential(grid[i, j, 0], grid[i, j, 1]); // potential(x,y)
 
                 }
             }
 
             // output the x,y component of the acceleration at each grid point
-            Console.WriteLine("x,y component of the acceleration at each grid point:");
-            for (int i = 0; i < dimx; i++)
+            Console.WriteLine("printing acceleration at each grid point");
+            using (StreamWriter ax = new StreamWriter("C:\\Users\\srobe\\Desktop\\ax.txt", true))
             {
-                for (int j = 0; j < dimy; j++)
-                {
-                    // print the effective gravity in the format (a_x, a_y)
-                    Console.Write("( {0} , {1} ) \t", grid[i, j, 2], grid[i, j, 3]);
-
-                    if (j == maxy)
+                for (int i = 0; i < dimx; i++)
                     {
-                        Console.WriteLine();
-                    }
-                    
-                }
-            }
+                        for (int j = 0; j < dimy; j++)
+                        {
+                            // print the effective gravity in the format (a_x, a_y)
+                            //Console.Write("( {0} , {1} ) \t", grid[i, j, 2], grid[i, j, 3]);
+
+                            ax.Write("{0}\t", grid[i, j, 2]);
+
+                            if (j == dimy - 1)
+                            {
+                                ax.WriteLine();
+                            }
+                        }   // loop on j
+                    }   // loop on i
+                }   // close ay
+          
+
+            using (StreamWriter ay = new StreamWriter("C:\\Users\\srobe\\Desktop\\ay.txt", true))
+            {
+
+                for (int i = 0; i < dimx; i++)
+                {
+                    for (int j = 0; j < dimy; j++)
+                    {
+
+                        ay.Write("{0}\t", grid[i, j, 3]);
+
+                        if (j == dimy - 1)
+                        {
+                            ay.WriteLine();
+                        }
+                    }   // loop on j
+                }   // loop on i
+            }   // close ay
+
 
             // output the potential for each grid point
-            Console.WriteLine("potential for each grid point: ");
-            for (int i = 0; i < dimx; i++)
-            {
-                for (int j = 0; j < dimy; j++)
+            Console.WriteLine("printing potential for each grid point");
+
+           //Console.Write("{0} \t", grid[i, j, 4]);
+           using (StreamWriter writetext = new StreamWriter("C:\\Users\\srobe\\Desktop\\potential.txt", true))
+           {
+                for (int i = 0; i < dimx; i++)
                 {
-                    Console.Write("{0} \t", grid[i, j, 4]);
-                    if (j == maxy)
+                    for (int j = 0; j < dimy; j++)
                     {
-                        Console.WriteLine();
+                        writetext.Write("{0} \t", grid[i, j, 4]);
+
+                        if (j == dimy-1)
+                        {
+                            writetext.WriteLine();
+                        }
                     }
                 }
             }
@@ -117,7 +154,40 @@ namespace homework_two
             Console.WriteLine();
             Console.WriteLine("Part (3)");
 
+            // need to use coordinate system w/ origin at center of mass
 
+            // part A
+            Console.WriteLine("Part A");
+            Console.WriteLine("M1 = 3, M2 = 1, sep = 1"); 
+
+            Globals.M1 = 3;
+            Globals.M2 = 1;
+            Globals.M = Globals.M1 + Globals.M2;
+            Globals.sep = 1;
+
+            Globals.x1 = -1 * Globals.M1 * Globals.sep / Globals.M;
+            Globals.x2 = Globals.M1 * Globals.sep / Globals.M;
+
+            Console.WriteLine(DoSecant(Globals.x2, 2)); 
+            Console.WriteLine(DoSecant(0, Globals.x2));
+            Console.WriteLine(DoSecant(-2, Globals.x1));
+
+
+            // part B
+            Console.WriteLine("Part B");
+            Console.WriteLine("M1 = 100, M2 = 1, sep = 1"); 
+
+            Globals.M1 = 100;
+            Globals.M2 = 1;
+            Globals.M = Globals.M1 + Globals.M2;
+            Globals.sep = 1;
+
+            Globals.x1 = -1 * Globals.M1 * Globals.sep / Globals.M;
+            Globals.x2 = Globals.M1 * Globals.sep / Globals.M;
+
+            Console.WriteLine(DoSecant(Globals.x2, 2));
+            Console.WriteLine(DoSecant(0, Globals.x2));
+            Console.WriteLine(DoSecant(-2, Globals.x1));
 
             // keep window open
             Console.WriteLine();
@@ -193,46 +263,28 @@ namespace homework_two
             throw new NotImplementedException();
         }
 
-        private static int FindMax(int a, int b)
-        {
-            if (b > a)
-            {
-                return b;
-            }
-            else
-            {
-                return a;
-            }
-        }
-
         private static double L(double x)
         {
-            // TODO: assign this properly for part (3)
-            return Math.Cos(x);
+            double temp = 0;
+            temp = -1 * Globals.M1 * (x - Globals.x1) / Math.Pow((x - Globals.x1), 3);
+            temp -= Globals.M2 * (x - Globals.x2) / Math.Pow((x - Globals.x2), 3);
+            temp += Globals.M * x / Math.Pow(Globals.sep, 3);
+
+            return temp;
         }
 
-        // derivative of L(x)
-        private static double Lderiv(double v)
-        {
-            throw new NotImplementedException();
-        }
 
-        // returns slope, according to funtion F
-        // TODO: CHECK THIS!!!
         private static double Secant(double pm1, double pm2)
         {
-
             return pm1 - (L(pm1) * (pm1 - pm2)) / (L(pm1) - L(pm2));
         }
 
-        private static double DoSecant()
+        private static double DoSecant(double min, double max)
         {
-            // pull global range into local instance
-            double min = Globals.min;
-            double max = Globals.max;
-            
 
-            int i = 2;  // initialize step counter to two b/c we do first two iterations outside the loop
+            // initialize step counter to two b/c we do first two iterations outside the loop
+            int i = 2;  
+
             double p = min + (max - min) / 2;
             double f = L(p);
             double tol = 0.0001;
@@ -245,10 +297,6 @@ namespace homework_two
             // initial conditions
             fpValuesS[0] = 1.5;
             fpValuesS[1] = Secant(min + (max - min) / 2, fpValuesS[0]);
-
-            // optional output
-            //Console.WriteLine(0 + "\t" + fpValuesS[0]);
-            //Console.WriteLine(1 + "\t" + fpValuesS[1]);
 
             do
             {
@@ -266,6 +314,7 @@ namespace homework_two
             return fpValuesS[i];
         }
 
+        // Newton's method, not fully implemented (no derivative function)
         private static double DoNewtons()
         {
             int i = 0;
@@ -284,7 +333,7 @@ namespace homework_two
             // initial conditions
             pValuesN[0] = min + (max - min) / 2;
             fpValuesN[0] = L(min + (max - min) / 2);
-            fprimeValuesN[0] = Lderiv(min + (max - min) / 2);
+            //fprimeValuesN[0] = Lderiv(min + (max - min) / 2);
 
             // optional output
             //Console.WriteLine("0" + "\t" + pValuesN[0]);
@@ -296,7 +345,7 @@ namespace homework_two
                 pValuesN[i] = pValuesN[i - 1]
                   - (fpValuesN[i - 1] / fprimeValuesN[i - 1]);
                 fpValuesN[i] = L(pValuesN[i]);
-                fprimeValuesN[i] = Lderiv(pValuesN[i]);
+            //    fprimeValuesN[i] = Lderiv(pValuesN[i]);
 
                 // optional output
                 //Console.WriteLine(i + "\t" + pValuesN[i]);
