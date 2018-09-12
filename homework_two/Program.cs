@@ -44,6 +44,8 @@ namespace homework_two
             Console.WriteLine("Part (1)");
 
             // get Globals.{M1, M2, sep} from the user & ensure values are valid
+            Console.WriteLine("To generate plots for part 2a, set M1 = 3, M2 = 1, and sep = 1");
+            Console.WriteLine("To generate plots for part 2b, set M1 = 100, M2 = 1, and sep = 1");
             getInput();
 
             // initalize grid
@@ -65,6 +67,7 @@ namespace homework_two
             Console.WriteLine("instantiated grid");
 
             
+            // define x,y grid and evaluate gravity and potential for each (x,y)
             for (int i = 0; i < dimx; i++)
             {
                 for (int j = 0; j < dimy; j++)
@@ -81,7 +84,7 @@ namespace homework_two
                 }
             }
 
-            // output the x,y component of the acceleration at each grid point
+            // output the x component of the acceleration at each grid point
             Console.WriteLine("printing acceleration at each grid point");
             using (StreamWriter ax = new StreamWriter("C:\\Users\\srobe\\Desktop\\ax.txt", true))
             {
@@ -102,7 +105,7 @@ namespace homework_two
                     }   // loop on i
                 }   // close ay
           
-
+            // output the y component of the acceleration at each grid point
             using (StreamWriter ay = new StreamWriter("C:\\Users\\srobe\\Desktop\\ay.txt", true))
             {
 
@@ -124,10 +127,8 @@ namespace homework_two
 
             // output the potential for each grid point
             Console.WriteLine("printing potential for each grid point");
-
-           //Console.Write("{0} \t", grid[i, j, 4]);
-           using (StreamWriter writetext = new StreamWriter("C:\\Users\\srobe\\Desktop\\potential.txt", true))
-           {
+            using (StreamWriter writetext = new StreamWriter("C:\\Users\\srobe\\Desktop\\potential.txt", true))
+            {
                 for (int i = 0; i < dimx; i++)
                 {
                     for (int j = 0; j < dimy; j++)
@@ -146,8 +147,8 @@ namespace homework_two
             Console.WriteLine();
             Console.WriteLine("Part (2)");
 
-            // TODO: generate contour plots
-            // TODO: generate vector plot
+            Console.WriteLine("This section is implemented using the script makePlots.py, ");
+            Console.WriteLine("which looks for the text files generated in Part (1). ");
 
 
             // part 3
@@ -168,9 +169,21 @@ namespace homework_two
             Globals.x1 = -1 * Globals.M1 * Globals.sep / Globals.M;
             Globals.x2 = Globals.M1 * Globals.sep / Globals.M;
 
-            Console.WriteLine(DoSecant(Globals.x2, 2)); 
-            Console.WriteLine(DoSecant(0, Globals.x2));
-            Console.WriteLine(DoSecant(-2, Globals.x1));
+            double delta = 0.25;        // avoid singularities
+
+            /*     // output the effective for each point on the x axis ( used for debugging)
+                 Console.WriteLine("printing g for each grid point on x");
+                 using (StreamWriter writetext = new StreamWriter("C:\\Users\\srobe\\Desktop\\gvals.txt", true))
+                 {
+                     for (int i = -100; i <= 100; i++)
+                     {
+                         writetext.WriteLine("{0} \t", L( (double) i * 0.10) );  
+                     }
+                 }       */
+
+            Console.WriteLine("L1 = " + DoSecant(0.1, 0.2));        // L1 = 0.165055535250554
+            Console.WriteLine("L2 = " + DoSecant(1.2, 1.3));        // L2 = 1.23828349344855
+            Console.WriteLine("L3 = " + DoSecant(-1.6, -1.4));      // L3 = -1.47547642755739 
 
 
             // part B
@@ -185,9 +198,21 @@ namespace homework_two
             Globals.x1 = -1 * Globals.M1 * Globals.sep / Globals.M;
             Globals.x2 = Globals.M1 * Globals.sep / Globals.M;
 
-            Console.WriteLine(DoSecant(Globals.x2, 2));
-            Console.WriteLine(DoSecant(0, Globals.x2));
-            Console.WriteLine(DoSecant(-2, Globals.x1));
+            // output the effective for each point on the x axis ( used for debugging)
+            Console.WriteLine("printing g for each grid point on x");
+            using (StreamWriter writetext = new StreamWriter("C:\\Users\\srobe\\Desktop\\gvals.txt", true))
+            {
+                double i = 0.8;
+                while ( i < 1.2 )
+                {
+                    writetext.WriteLine("{0} \t {1}",i, L( (double) i ) ); 
+                    i += 0.02; 
+                }
+            }       
+
+            Console.WriteLine(DoSecant(-10, -5));   //-1.743881191
+            Console.WriteLine(DoSecant(0.4, 0.5));  //0.446352519
+            Console.WriteLine(DoSecant(1.06, 2));             
 
             // keep window open
             Console.WriteLine();
@@ -266,8 +291,8 @@ namespace homework_two
         private static double L(double x)
         {
             double temp = 0;
-            temp = -1 * Globals.M1 * (x - Globals.x1) / Math.Pow((x - Globals.x1), 3);
-            temp -= Globals.M2 * (x - Globals.x2) / Math.Pow((x - Globals.x2), 3);
+            temp = -1 * Globals.M1 * (x - Globals.x1) / Math.Pow(Math.Abs(x - Globals.x1), 3);
+            temp -= Globals.M2 * (x - Globals.x2) / Math.Pow(Math.Abs(x - Globals.x2), 3);
             temp += Globals.M * x / Math.Pow(Globals.sep, 3);
 
             return temp;
@@ -282,21 +307,26 @@ namespace homework_two
         private static double DoSecant(double min, double max)
         {
 
-            // initialize step counter to two b/c we do first two iterations outside the loop
-            int i = 2;  
-
             double p = min + (max - min) / 2;
             double f = L(p);
             double tol = 0.0001;
             int maxIt = 50;
 
+            // code for debugging
+            //Console.WriteLine();
+            //Console.WriteLine("( {0} , {1} )", min, max);
+            //Console.WriteLine("( {0} , {1} )", L(min), L(max));
+            
 
-            double[] pValuesS = new double[maxIt];
+            //double[] pValuesS = new double[maxIt];
             double[] fpValuesS = new double[maxIt];
-
+            
             // initial conditions
-            fpValuesS[0] = 1.5;
+            fpValuesS[0] = L(min);
             fpValuesS[1] = Secant(min + (max - min) / 2, fpValuesS[0]);
+
+            // initialize step counter to two b/c we do first two iterations outside the loop
+            int i = 2;
 
             do
             {
@@ -308,10 +338,9 @@ namespace homework_two
 
                 i++;
 
-            } while (Math.Abs(fpValuesS[i - 1] - fpValuesS[i - 2]) > tol
-              && i < maxIt - 1);
+            } while (Math.Abs(fpValuesS[i - 1] - fpValuesS[i - 2]) > tol && i < maxIt - 1);
 
-            return fpValuesS[i];
+            return fpValuesS[i-1];
         }
 
         // Newton's method, not fully implemented (no derivative function)
