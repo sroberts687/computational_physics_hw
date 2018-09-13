@@ -79,7 +79,7 @@ namespace homework_two
                     grid[i, j, 2] = FunctX(grid[i, j, 0], grid[i, j, 1]);  // g_x(x,y)
                     grid[i, j, 3] = FunctY(grid[i, j, 0], grid[i, j, 1]);  // g_y(x,y)
 
-                    grid[i, j, 4] = Potential(grid[i, j, 0], grid[i, j, 1]); // potential(x,y)
+                    grid[i, j, 4] = Potential(grid[i, j, 1], grid[i, j, 0]); // potential(x,y)
 
                 }
             }
@@ -108,7 +108,6 @@ namespace homework_two
             // output the y component of the acceleration at each grid point
             using (StreamWriter ay = new StreamWriter("C:\\Users\\srobe\\Desktop\\ay.txt", true))
             {
-
                 for (int i = 0; i < dimx; i++)
                 {
                     for (int j = 0; j < dimy; j++)
@@ -169,7 +168,6 @@ namespace homework_two
             Globals.x1 = -1 * Globals.M1 * Globals.sep / Globals.M;
             Globals.x2 = Globals.M1 * Globals.sep / Globals.M;
 
-            double delta = 0.25;        // avoid singularities
 
             /*     // output the effective for each point on the x axis ( used for debugging)
                  Console.WriteLine("printing g for each grid point on x");
@@ -181,9 +179,11 @@ namespace homework_two
                      }
                  }       */
 
-            Console.WriteLine("L1 = " + DoSecant(0.1, 0.2));        // L1 = 0.165055535250554
-            Console.WriteLine("L2 = " + DoSecant(1.2, 1.3));        // L2 = 1.23828349344855
-            Console.WriteLine("L3 = " + DoSecant(-1.6, -1.4));      // L3 = -1.47547642755739 
+            Console.WriteLine("L1 = " + DoSecant(0.1, 0.2, 0));        // L1 = 0.165055535250554
+            Console.WriteLine("L2 = " + DoSecant(1.2, 1.3, 0));        // L2 = 1.23828349344855
+            Console.WriteLine("L3 = " + DoSecant(-1.6, -1.4, 0));      // L3 = -1.47547642755739 
+            Console.WriteLine("L4 = " + DoSecant(0.8, 1.2, 1));        // L4 = 1.00
+            Console.WriteLine("L5 = " + DoSecant(-1.2, -0.8, 1));      // L5 = -1.00
 
 
             // part B
@@ -198,21 +198,27 @@ namespace homework_two
             Globals.x1 = -1 * Globals.M1 * Globals.sep / Globals.M;
             Globals.x2 = Globals.M1 * Globals.sep / Globals.M;
 
-            // output the effective for each point on the x axis ( used for debugging)
-            Console.WriteLine("printing g for each grid point on x");
-            using (StreamWriter writetext = new StreamWriter("C:\\Users\\srobe\\Desktop\\gvals.txt", true))
-            {
-                double i = 0.8;
-                while ( i < 1.2 )
-                {
-                    writetext.WriteLine("{0} \t {1}",i, L( (double) i ) ); 
-                    i += 0.02; 
-                }
-            }       
+            /*   // output the effective for each point on the x axis ( used for debugging)
+               Console.WriteLine("printing g for each grid point on x");
+               using (StreamWriter writetext = new StreamWriter("C:\\Users\\srobe\\Desktop\\gvals.txt", true))
+               {
+                   double i = -2;
+                   while ( i < 2 )
+                   {
+                       writetext.WriteLine("{0} \t {1}",i, L2( (double) i ) ); 
+                       //writetext.WriteLine("{0} \t {1}",i, L( (double) i ) ); 
+                       i += 0.1; 
+                   }
+               }       */
 
-            Console.WriteLine(DoSecant(-10, -5));   //-1.743881191
-            Console.WriteLine(DoSecant(0.4, 0.5));  //0.446352519
-            Console.WriteLine(DoSecant(1.06, 2));             
+            
+            Console.WriteLine("L1 = " + DoSecant(0.4, 0.5, 0));     // L1 = 0.446352519
+            Console.WriteLine("L2 = " + DoBisection(1.06, 2));      // L2 = 1.0985546875
+            Console.WriteLine("L3 = " + DoSecant(-10, -5, 0));      // L3 = -1.743881191
+            Console.WriteLine("L4 = " + DoSecant(0.8, 1.2, 1));     // L4 = 1.00
+            Console.WriteLine("L5 = " + DoSecant(-1.2, -0.8, 1));   // L5 = -1.00
+
+
 
             // keep window open
             Console.WriteLine();
@@ -298,13 +304,37 @@ namespace homework_two
             return temp;
         }
 
-
-        private static double Secant(double pm1, double pm2)
+        private static double L2( double y)
         {
-            return pm1 - (L(pm1) * (pm1 - pm2)) / (L(pm1) - L(pm2));
+            double temp = 0;
+            double x = (Globals.x1 + Globals.x2) / 2;
+
+
+            temp = -1 * Globals.M1 * (y) / Math.Pow(Math.Abs(y), 3);
+            temp -= Globals.M2 * y / Math.Pow(Math.Abs(y), 3);
+            temp += Globals.M * y / Math.Pow(Globals.sep, 3); 
+
+
+
+            return temp;
         }
 
-        private static double DoSecant(double min, double max)
+
+        private static double Secant(double pm1, double pm2, int flag)
+        {
+
+            if (flag == 0)
+            {
+                return pm1 - (L(pm1) * (pm1 - pm2)) / (L(pm1) - L(pm2));
+            }
+            else
+            {
+                return pm1 - (L2(pm1) * (pm1 - pm2)) / (L2(pm1) - L2(pm2));
+            }
+            
+        }
+
+        private static double DoSecant(double min, double max, int flag)
         {
 
             double p = min + (max - min) / 2;
@@ -320,10 +350,17 @@ namespace homework_two
 
             //double[] pValuesS = new double[maxIt];
             double[] fpValuesS = new double[maxIt];
-            
+
             // initial conditions
-            fpValuesS[0] = L(min);
-            fpValuesS[1] = Secant(min + (max - min) / 2, fpValuesS[0]);
+            if (flag == 0)
+            {
+                fpValuesS[0] = L(min);
+            } else
+            {
+                fpValuesS[0] = L2(min);
+            }
+
+            fpValuesS[1] = Secant(min + (max - min) / 2, fpValuesS[0], flag);
 
             // initialize step counter to two b/c we do first two iterations outside the loop
             int i = 2;
@@ -331,7 +368,7 @@ namespace homework_two
             do
             {
 
-                fpValuesS[i] = Secant(fpValuesS[i - 1], fpValuesS[i - 2]);
+                fpValuesS[i] = Secant(fpValuesS[i - 1], fpValuesS[i - 2], flag);
 
                 //optional output
                 // Console.WriteLine(i + "\t" + fpValuesS[i]);
@@ -356,7 +393,7 @@ namespace homework_two
             double[] fpValuesN = new double[maxIt];
             // function inputs
             double[] pValuesN = new double[maxIt];
-            // derivatives of function outputs
+            // vals of function derivative
             double[] fprimeValuesN = new double[maxIt];
 
             // initial conditions
@@ -387,7 +424,74 @@ namespace homework_two
             return 0;
         }
 
+        // bisection method, used for third Lagrange point when M1 = 100 because
+        // it was convering to a different point, even when interval was small
+        private static double DoBisection(double a, double b)
+        {
+
+            double p = 0;
+            int i = 0;
+            double f = 0;
+            int maxIt = 200;
+            double tol = 0.001;
+
+            bool increasing = true;
+
+            double min = Globals.min;
+            double max = Globals.max;
+
+            // function outputs
+            double[] fpValuesBi = new double[maxIt];
+            // function inputs
+            double[] pValuesBi = new double[maxIt];
+
+            do { 
+                // find p and store it in the array
+                p = a + (0.5 * (b - a));
+                pValuesBi[i] = p;
+
+                // evaluate f(p) and store it
+                f = L(p);
+                fpValuesBi[i] = f;
+
+                /*
+                 * // break if f(p) is within the tolerance if (f == 0.0 || (f <=
+                 * 0.01 && f >= 0) || (f >= -0.01 && f <= 0)) break;
+                 */
+
+                if (!increasing)
+                {
+                    // if f > 0 make p upper
+                    if (f < 0)
+                        b = p;
+
+                    // if f < 0 make p lower
+                    if (f > 0)
+                        a = p;
+                }
+                else
+                {
+                    if (f > 0)
+                        b = p;
+
+                    // if f < 0 make p lower
+                    if (f < 0)
+                        a = p;
+                }
+
+                i++;
+
+            } while (i <= maxIt && 0.5 * (b - a) > tol);
+
+            // display the roots
+            //Console.WriteLine("Bisection method gives a root at " + "(" + p + ", " + f + ")."); 
+
+            return p;
+
         }
+
+
+    }
 }
 
 
