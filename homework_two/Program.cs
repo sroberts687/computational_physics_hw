@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-
+// COMPUTATIONAL PHYSICS: ASSIGNMENT 2
+// ROOT-FINDING
+// SARAH ROBERTS
 
 
 namespace homework_two
@@ -227,6 +229,7 @@ namespace homework_two
 
         }
 
+        // prompt user to enter M1, M2, and sep
         private static void getInput()
         {
             while (Globals.M1 < 0)
@@ -258,6 +261,7 @@ namespace homework_two
 
         }
 
+        // return potential at (x,y)
         private static double Potential(double x, double y)
         {
             double U1 = (-1 * Globals.G * Globals.M1 * Globals.M2) / Math.Sqrt(x * x + y * y); 
@@ -266,6 +270,7 @@ namespace homework_two
             return U1 + U2;
         }
 
+        // return g_x and (x,y)
         private static double FunctX(double x, double y)
         {
             double F1 = (Globals.G * Globals.M1) / (x * x + y * y);
@@ -278,6 +283,7 @@ namespace homework_two
 
         }
 
+        // return g_y at (x,y)
         private static double FunctY(double x, double y)
         {
             double F1 = (Globals.G * Globals.M1) / (x * x + y * y);
@@ -289,11 +295,7 @@ namespace homework_two
             return F1 + F2;
         }
 
-        private static double Funct(double v1, double v2)
-        {
-            throw new NotImplementedException();
-        }
-
+        // calculates g(x,0) for L1, L2, L3
         private static double L(double x)
         {
             double temp = 0;
@@ -304,6 +306,7 @@ namespace homework_two
             return temp;
         }
 
+        // calculates g(x_{cm},y) for L4, L5
         private static double L2( double y)
         {
             double temp = 0;
@@ -313,13 +316,11 @@ namespace homework_two
             temp = -1 * Globals.M1 * (y) / Math.Pow(Math.Abs(y), 3);
             temp -= Globals.M2 * y / Math.Pow(Math.Abs(y), 3);
             temp += Globals.M * y / Math.Pow(Globals.sep, 3); 
-
-
-
+            
             return temp;
         }
 
-
+        // "heart" of secant method calculation
         private static double Secant(double pm1, double pm2, int flag)
         {
 
@@ -334,6 +335,7 @@ namespace homework_two
             
         }
 
+        // perform secant method (driver)
         private static double DoSecant(double min, double max, int flag)
         {
 
@@ -380,50 +382,6 @@ namespace homework_two
             return fpValuesS[i-1];
         }
 
-        // Newton's method, not fully implemented (no derivative function)
-        private static double DoNewtons()
-        {
-            int i = 0;
-            int maxIt = 50;
-            double tol = 0.0001;
-            double min = Globals.min;
-            double max = Globals.max;
-            
-            // function outputs
-            double[] fpValuesN = new double[maxIt];
-            // function inputs
-            double[] pValuesN = new double[maxIt];
-            // vals of function derivative
-            double[] fprimeValuesN = new double[maxIt];
-
-            // initial conditions
-            pValuesN[0] = min + (max - min) / 2;
-            fpValuesN[0] = L(min + (max - min) / 2);
-            //fprimeValuesN[0] = Lderiv(min + (max - min) / 2);
-
-            // optional output
-            //Console.WriteLine("0" + "\t" + pValuesN[0]);
-
-            i++;
-
-            do
-            {
-                pValuesN[i] = pValuesN[i - 1]
-                  - (fpValuesN[i - 1] / fprimeValuesN[i - 1]);
-                fpValuesN[i] = L(pValuesN[i]);
-            //    fprimeValuesN[i] = Lderiv(pValuesN[i]);
-
-                // optional output
-                //Console.WriteLine(i + "\t" + pValuesN[i]);
-
-                i++;
-
-            } while (Math.Abs(pValuesN[i - 1] - pValuesN[i - 2]) > tol
-              && i < maxIt - 1);
-
-            return 0;
-        }
-
         // bisection method, used for third Lagrange point when M1 = 100 because
         // it was convering to a different point, even when interval was small
         private static double DoBisection(double a, double b)
@@ -435,7 +393,8 @@ namespace homework_two
             int maxIt = 200;
             double tol = 0.001;
 
-            bool increasing = true;
+            // assume b > a
+            bool increasing = true; 
 
             double min = Globals.min;
             double max = Globals.max;
