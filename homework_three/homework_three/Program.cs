@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace homework_three
 {
@@ -25,13 +26,33 @@ namespace homework_three
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Homework two, Sarah Roberts.");
+            Console.WriteLine("Homework three, Sarah Roberts.");
 
+            StreamReader data = File.OpenText("hw3-fitting.dat");
 
+            string read = null;
 
+            int i = 0;
+            double[] input = new double[100];
+            double[] output = new double[100];
+            double[] error = new double[100];
+            double[] alphaL = new double[30];
+            double[] alphaG = new double[30];
 
+            while ((read = data.ReadLine()) != null)
+            {
 
+                input[i] = read.Trim();   // TODO: get the first entry
+                output[i] = read.Trim();    // TODO: get the second entry
+                error[i] = read.Trim();     // TODO: get the last entry
 
+                i += 1;
+
+                Console.WriteLine(read);
+            }
+            data.Close();
+
+           
 
             // keep window open
             Console.WriteLine();
