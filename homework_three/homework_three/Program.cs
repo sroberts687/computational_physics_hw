@@ -28,9 +28,7 @@ namespace homework_three
         {
             Console.WriteLine("Homework three, Sarah Roberts.");
 
-            StreamReader data = File.OpenText("hw3-fitting.dat");
-
-            string read = null;
+           
 
             int i = 0;
             double[] input = new double[100];
@@ -38,20 +36,30 @@ namespace homework_three
             double[] error = new double[100];
             double[] alphaL = new double[30];
             double[] alphaG = new double[30];
-
-            while ((read = data.ReadLine()) != null)
+ 
+            
+            // open and process data file
+            StreamReader data = File.OpenText("hw3-fitting.dat");
+            string str = null;  // will hold line from data
+            
+            while ((str = data.ReadLine()) != null)
             {
-
-                input[i] = read.Trim();   // TODO: get the first entry
-                output[i] = read.Trim();    // TODO: get the second entry
-                error[i] = read.Trim();     // TODO: get the last entry
+                // split str into three values using Regex
+                var ary = Regex.Split(str,@"[^0-9\.]+").Where(c => c != "." && c.Trim() != ""); 
+                
+                //store in the correct arrays
+                input[i] = ary[0];   // TODO: get the first entry
+                output[i] = ary[1];    // TODO: get the second entry
+                error[i] = ary[2];     // TODO: get the last entry
 
                 i += 1;
-
-                Console.WriteLine(read);
+                
+                //debug: display line that was just parsed
+                Console.WriteLine(str);
             }
             data.Close();
 
+            
            
 
             // keep window open
