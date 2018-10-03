@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace homework_three
 {
@@ -28,7 +29,10 @@ namespace homework_three
         {
             Console.WriteLine("Homework three, Sarah Roberts.");
 
-           
+            Console.WriteLine();
+            Console.WriteLine("Part 1:");
+
+
 
             int i = 0;
             double[] input = new double[100];
@@ -39,28 +43,37 @@ namespace homework_three
  
             
             // open and process data file
-            StreamReader data = File.OpenText("hw3-fitting.dat");
+            StreamReader data = File.OpenText("C:\\Users\\srobe\\source\\repos\\computational_physics_hw\\homework_three\\hw3_fitting.dat");
             string str = null;  // will hold line from data
             
             while ((str = data.ReadLine()) != null)
             {
                 // split str into three values using Regex
-                var ary = Regex.Split(str,@"[^0-9\.]+").Where(c => c != "." && c.Trim() != ""); 
-                
-                //store in the correct arrays
-                input[i] = ary[0];   // TODO: get the first entry
-                output[i] = ary[1];    // TODO: get the second entry
-                error[i] = ary[2];     // TODO: get the last entry
+                //TODO: this won't work with scientific notation
+                var ary = Regex.Split(str,@"[^0-9\.]+").Where(c => c != "." && c.Trim() != "");
+
+                // store in the correct arrays
+                input[i]  = Convert.ToDouble(ary.ElementAt(0));   // TODO: get the first entry
+                output[i] = Convert.ToDouble(ary.ElementAt(1));    // TODO: get the second entry
+                error[i]  = Convert.ToDouble(ary.ElementAt(2));     // TODO: get the last entry
 
                 i += 1;
                 
                 //debug: display line that was just parsed
-                Console.WriteLine(str);
+                //Console.WriteLine(str);
             }
             data.Close();
 
-            
-           
+
+
+
+
+
+            Console.WriteLine();
+            Console.WriteLine("Part 2:");
+
+
+
 
             // keep window open
             Console.WriteLine();
