@@ -1,0 +1,8 @@
+U:\Numerical Analysis\FFT\FastFourierTransform\FastFourierTransform\bin\Debug\FastFourierTransform.exe.config
+U:\Numerical Analysis\FFT\FastFourierTransform\FastFourierTransform\bin\Debug\FastFourierTransform.exe
+U:\Numerical Analysis\FFT\FastFourierTransform\FastFourierTransform\bin\Debug\FastFourierTransform.pdb
+U:\Numerical Analysis\FFT\FastFourierTransform\FastFourierTransform\obj\Debug\FastFourierTransform.csprojResolveAssemblyReference.cache
+U:\Numerical Analysis\FFT\FastFourierTransform\FastFourierTransform\obj\Debug\FastFourierTransform.exe
+U:\Numerical Analysis\FFT\FastFourierTransform\FastFourierTransform\obj\Debug\FastFourierTransform.pdb
+U:\Numerical Analysis\FFT\FastFourierTransform\FastFourierTransform\obj\Debug\FastFourierTransform.Properties.Resources.resources
+U:\Numerical Analysis\FFT\FastFourierTransform\FastFourierTransform\obj\Debug\FastFourierTransform.csproj.GenerateResource.Cache
