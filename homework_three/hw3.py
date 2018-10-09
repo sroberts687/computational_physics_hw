@@ -34,6 +34,7 @@ def gaus(a, v, v0):
     exp = -1*(ln2)*(v-v0)*(v-v0)/(a*a)
     return 1 / a * const * math.pow(e,exp)
     
+
 def dgda(a, v, v0):
     const = 0.46971863935 #sqrt(ln(2)/PI)
     ln2 = 0.69314718056
@@ -52,8 +53,9 @@ def dgdv0(a, v, v0):
     return num / denom
 
 
-def chi2(a, v0, v, phi, method):
-    chi = 0
+
+def chi2(a, v, phi, method):
+    chi2 = 0
     
     if method == 1:
         # use lorent
@@ -93,6 +95,7 @@ def dchidv0g(p, a, v, v0): # partial derivative of chi^2 wrt v_0 for phi = gauss
     temp = c * ln2 * (v-v0)*math.pow( 2, 2-math.pow(v-v0, 2)/a*a)
     temp = temp * (p - c * math.pow(2, -1*math.pow(v-v0, 2)/a*a) / a)
     return temp / a*a*a
+
 
 def Lagrange( n, x2 ):
  # implement Neville's algorithm, as described in Burden-Faire's
@@ -152,8 +155,6 @@ def gradient_descent(p, a, v, v0):
         v0new = v0 - h*v0grad
                 
     return anew, v0new
-  
-     
 
 # same as gradient_descent, but uses gaussian
 def gradient_descent2(p, a, v, v0):
@@ -184,7 +185,7 @@ def gradient_descent2(p, a, v, v0):
         v0new = v0 - h*v0grad
                 
     return anew, v0new
-
+  
 
 def splines(n):
     
@@ -341,11 +342,13 @@ plt.savefig('C:\\Users\\srobe\\Desktop\\13.png')
 plt.close()
 plt.clf()
 
+
 # plot raw data
 plt.plot(v, phi); plt.plot(v,phiNew)
 plt.savefig('C:\\Users\\srobe\\Desktop\\11.png')
 plt.close()
 plt.clf()
+
 
 print("Part 2: Data Interpolation")
 
@@ -357,8 +360,6 @@ y = 1/(25*x*x+1)
 
 plt.plot(x,y)
 plt.savefig('C:\\Users\\srobe\\Desktop\\21.png')
-#plt.show
-plt.close()
 #plt.clf()
 
 
@@ -367,7 +368,6 @@ plt.close()
 # Lagrange Polynomials -- neville's algorithm
 x2 = np.linspace(-1, 1, 200)
 y2 = np.linspace(-1,1,200)
-
 
 #degree = 6
 x = np.linspace(-1, 1, 7)
@@ -407,9 +407,25 @@ y3 = splines(n)
 
 plt.plot(x3, y3)
 plt.ylim([-0.1,1.1])
-#plt.show()
-
 plt.savefig('C:\\Users\\srobe\\Desktop\\23.png')
 plt.close()
-plt.clf()
+
+# Part 2.3
+
+# Natural Cubic Splines
+
+# define sets of 10 points -- interpolants
+x = np.linspace(-1, 1, 11)
+y = fn(x)
+
+n = 10  #solving on 10 intervals --> need 11 values
+x3 = np.linspace(-1, 1, 200)
+y3 = splines(n)
+
+plt.plot(x3, y3)
+plt.ylim([-0.1,1.1])
+#plt.show()
+plt.savefig('C:\\Users\\srobe\\Desktop\\24.png')
+plt.close()
+plt.clf
 
