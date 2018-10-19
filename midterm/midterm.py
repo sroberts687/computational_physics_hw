@@ -1,19 +1,7 @@
-'''
-
-                            Online Python Compiler.
-                Code, Compile, Run and Debug python program online.
-Write your code in this editor and press "Run" button to execute it.
-
-'''
-
-print("Hello World")
 import numpy as np
-import matplotlib as plt
-
-
-
-import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt 
+import random
+import pandas as pd
 
 def easy_function(x):
     return((3)*(x**2))
@@ -24,37 +12,86 @@ def hard_function(x):
 def f(x):
     return x**2 + 2
 
-def integrate(x1,x2,func=easy_function,n=100000):
-    n = 100
-    x1 = -5
-    x2 = 5
-    y1 = f(x1)
-    y2 = f(x2)
+def integrate(x1,x2,func,n):
+
     xvals = np.linspace(x1, x2, n)
-    yvals = f(xvals)
+    ymin = min(f(xvals)) - 1
+    ymax = max(f(xvals)) + 1
+    
+    xout = []
+    yout = []
+    check = []
+    
+    area=(x2-x1)*(ymax-ymin )
     
     for i in range(n):
-        x = np.random(x1,x2)
-        samplex.append(x)
-        y = np.random(y1,y2)
-        sampley.append(y)
+        x = random.uniform(x1,x2)
+        xout.append(x)
+        y = random.uniform(0,f(x2))
+        yout.append(y)
         if abs(y)>abs(func(x)) or y<0:
           check.append(0)     
         else:
           check.append(1)
           
-    print(np.mean(check)[0])
-    return(np.mean(check)*area,xs,ys)
+    #print(np.mean(check)*area)
+    return(np.mean(check)*area,xout,yout,check)
+
+
 
 
 print ("Computational Physics: Midterm Assignment")
 print("\t Sarah Roberts")
 
-X=np.linspace(-20,20,1000)
-plt.plot(X,easy_function(X))
-plt.show()
+#n = 100
+x1 = -5
+x2 = 5
+y1 = f(x1)
+y2 = f(x2)
 
-plt.plot(X,hard_function(X))
+#logical for development, if .true. then time-intensive code does not run
+saveTime = True
+
+
+#plot function
+xvals = np.linspace(x1, x2, 1000)
+plt.plot(xvals,f(xvals))
+#plt.show()
+
+print("int(f(x) from -1 to 1 is 4.666666666....") 
+true = 4.66666666666666667
+val = integrate(-1, 1, f, 100)[0]
+print("estimate for n = 100 is ", val )
+print("\t error is", abs(true-val)/true*100, "%")
+val = integrate(-1,1, f, 1000)[0]
+print("estimate for n = 1 000 is ", val)
+print("\t error is", abs(true-val)/true*100, "%")
+
+if saveTime == False:
+    val1 = integrate(-1, 1, f, 1000000)[0]
+    print("1st estimate for n = 1 000 000 is ",  val1)
+    print("\t error is", abs(true-val1)/true*100, "%")
+    val2 = integrate(-1, 1, f, 1000000)[0]
+    print("2nd estimate for n = 1 000 000 is ",  val2)
+    print("\t error is", abs(true-val2)/true*100, "%")
+    val3 = integrate(-1, 1, f, 1000000)[0]
+    print("3rd estimate for n = 1 000 000 is ",  val3)
+    print("\t error is", abs(true-val3)/true*100, "%")
+    print()
+    val = (val1+val2+val3)/3
+    print("avg of 3 estimates for n = 1 mil is ", val)
+    print("\t error is", abs(true-val)/true*100, "%")
+
+
+
+# make a pretty picture
+_,x,y,c=integrate(-3.5,3.7,f, 1000)
+df=pd.DataFrame()
+df['x']=x
+df['y']=y
+df['c']=c
+
+#plt.plot(xvals,yvals)
+plt.scatter(df[df['c']==0]['x'],df[df['c']==0]['y'],color='green')
+plt.scatter(df[df['c']==1]['x'],df[df['c']==1]['y'],color='blue')
 plt.show()
-print(integrate(0.3,2.5)[0])
-print(integrate(0.3,2.5,hard_function)[0])
