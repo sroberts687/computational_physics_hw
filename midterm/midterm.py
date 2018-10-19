@@ -54,8 +54,8 @@ saveTime = True
 
 
 #plot function
-xvals = np.linspace(x1, x2, 1000)
-plt.plot(xvals,f(xvals))
+#xvals = np.linspace(x1, x2, 1000)
+#plt.plot(xvals,f(xvals))
 #plt.show()
 
 print("int(f(x) from -1 to 1 is 4.666666666....") 
@@ -83,15 +83,17 @@ if saveTime == False:
     print("\t error is", abs(true-val)/true*100, "%")
 
 
+print()
+print()
+print("int(f(x) from -2 to 4 is 36....") 
+true = 36.0
+val = integrate(-2, 4, f, 1000)[0]
+print("estimate for n = 1 000 is ", val )
+print("\t error is", abs(true-val)/true*100, "%")
+val = integrate(-2, 4, f, 10000)[0]
+print("estimate for n = 10 000 is ", val)
+print("\t error is", abs(true-val)/true*100, "%")
+val = integrate(-2, 4, f, 1000000)[0]
+print("estimate for n = 100 000 is ", val)
+print("\t error is", abs(true-val)/true*100, "%")
 
-# make a pretty picture
-_,x,y,c=integrate(-3.5,3.7,f, 1000)
-df=pd.DataFrame()
-df['x']=x
-df['y']=y
-df['c']=c
-
-#plt.plot(xvals,yvals)
-plt.scatter(df[df['c']==0]['x'],df[df['c']==0]['y'],color='green')
-plt.scatter(df[df['c']==1]['x'],df[df['c']==1]['y'],color='blue')
-plt.show()
