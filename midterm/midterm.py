@@ -17,33 +17,6 @@ def f(x):
 def F(x):
     return (1/3)*x**3-2*x
 
-def integratePos(x1,x2,func,n):
-
-    xvals = np.linspace(x1, x2, n)
-    ymin = min(f(xvals)) - 1
-    ymax = max(f(xvals)) + 1
-
-    xout = []   # list of x vals from RNG
-    yout = []   # list of y vals from RNG
-    ratio = []  # ratio of in-bounds vs. out-of-bounds values
-
-    area=(x2-x1)*(ymax-ymin )
-
-    for i in range(n):
-        x = random.uniform(x1,x2)
-        xout.append(x)
-        y = random.uniform(ymin,func(x2))
-        yout.append(y)
-        if abs(y)>abs(func(x)) or y<0:
-          ratio.append(0)
-        else:
-          ratio.append(1)
-              
-
-    #print(np.mean(check)*area)
-    return(np.mean(ratio)*area,xout,yout)
-    
-    
 def integrate(x1,x2,func,n):
     
     integral = 0
