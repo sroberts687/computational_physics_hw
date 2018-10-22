@@ -126,7 +126,7 @@ print("\t error is", abs(true-val)/true*100, "%")
 # TODO: REJECTION TECHNIQUE (from class)
 
 
-# TODO: STRATIFIED SAMPLING
+# TODO: INTELLIGENT SAMPLING
     # 1. divide integration domain into k regions
     # 2. select n_k num points for MC technique in eac h region
     # 3. apply monte carlo integration to each of the regions
