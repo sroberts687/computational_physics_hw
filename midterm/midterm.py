@@ -4,12 +4,9 @@ import random
 import pandas as pd
 
 def g(x):   # g(x) = 2 x
-    return(2*x)
+    return(x**2 + 3*x + 1)
 def G(x):   # 1/2*x^2
-    return (0.5*x*x)
-
-def hard_function(x):
-    return((1/np.sqrt(2*np.pi))*np.exp(-(x**2)/2))
+    return ((1/3)*x**3 + (3/2)*x**2 + x )
 
 def f(x):
     return x**2 + -2
@@ -23,7 +20,6 @@ def integrate(x1,x2,func,n):
     
     for i in range(0, n):
         integral += func(random.uniform(x1,x2))
-    
     
     integral = (x2-x1) * integral / n
     
@@ -54,13 +50,46 @@ def NDeriv(idx, xvals):
 
 
     # valid for first derivative only
-    deriv /= abs(xvals[0] - xvals[1])
+    deriv /= abs(xvals[0] - xvals[1])       # this doesn't actually work
     return deriv
 
 def TwoPtDeriv( y1, y2, dx):
     return (y2-y1)/dx
 
+# INTELLIGENT SAMPLING
+    # 1. divide integration domain into k regions
+    # 2. select n_k num points for MC technique in eac h region
+    # 3. apply monte carlo integration to each of the regions
+def betterInt( a, b, func, n ):
+    # define parameters
+    threshold = 0.5
+    epsilon = 0.08
 
+    xValues = []
+    divisionFinished = False
+    xValues.append(a)              # xValues[0] = a
+    xValues.append(a + epsilon)    # xValues[1] = a + epsilon
+    
+    i = 1
+    while not divisionFinished:
+        d1 = TwoPtDeriv(func(xValues[i-1]), func(xValues[i-1] + epsilon), epsilon)
+        d2 = TwoPtDeriv(func(xValues[i]),  func(xValues[i] + epsilon), epsilon)
+        if ( abs(d2 - d1) <= threshold):
+            xValues.append(xValues[i])
+            i += 1
+            xValues[i] = xValues[i-1]+ epsilon
+        else:
+            xValues[i] += epsilon
+        if xValues[i] >= b - epsilon:
+            divisionFinished = True
+        
+    xValues.append(b)
+    
+    out = 0
+    for i in range(0, len(xValues)-1):
+        out += integrate(xValues[i], xValues[i+1], func, n)
+        
+    return out
 
 print ("Computational Physics: Midterm Assignment")
 print("\t Sarah Roberts")
@@ -72,7 +101,7 @@ y1 = f(x1)
 y2 = f(x2)
 
 #logical for development, if .true. then time-intensive code does not run
-saveTime = False    #True
+saveTime = True
 
 
 #plot function
@@ -120,16 +149,7 @@ print("estimate for n = 100 000 is ", val)
 print("\t error is", abs(true-val)/true*100, "%")
 
 
-# TODO: IMPORTANCE SAMPLING (from class)
 
-
-# TODO: REJECTION TECHNIQUE (from class)
-
-
-# TODO: INTELLIGENT SAMPLING
-    # 1. divide integration domain into k regions
-    # 2. select n_k num points for MC technique in eac h region
-    # 3. apply monte carlo integration to each of the regions
 
 print()
 print("Improvement: divide the domain into regions where the function ")
@@ -142,6 +162,8 @@ print("would not be a good trade-off for the simple functions and small ")
 print("regions defined in this driver program.")
 print()
 
+
+# first implement MC over the domain with a fixed number of intervals
 k = 3
 xa = -2
 xb = 4
@@ -155,21 +177,49 @@ for i in range(0, k) :
     print("i = ", i)
     print("a = ", thisA )
     print("b = ", thisB)
-    vals.append(integrate(thisA, thisB, f, n))
+    vals.append(integrate(thisA, thisB, g, n))
     print("int = ", vals[i])
     thisA = thisA + step
-res = 0.0
+fixedStep = 0.0
 for i in range(0, len(vals)):
-    res = res + vals[i]
-print("MC w/o steps int of f from ", xa, " to ", xb, " is ",
-      integrate(xa, xb, f, n*k) )
-print("MC w/ steps int of f from ", xa, " to ", xb, " is ", res )
-print("actual int of f from", xa, " to ", xb, " is ", F(xb)-F(xa)  )
+    fixedStep = fixedStep + vals[i]
+    
+    
+print()  
+true = G(xb)-G(xa)
+print("analytic int of f from", xa, " to ", xb, " is ", true ) 
+res =   integrate(xa, xb, g, n*k)
+print("MC w/o steps int of f from ", xa, " to ", xb, " is ", res )
+print("\t error is", abs(true-res)/true*100, "%")
 
+res = fixedStep
+print("MC w/ fixed steps int of f from ", xa, " to ", xb, " is ", res )
+print("\t error is", abs(true-res)/true*100, "%")
 
+print()
 
+res = betterInt(xa, xb, g, 10)
+print("MC w/ adaptive steps int of f from ", xa, " to ", xb, " is ", res, "for n = 10")
+print("\t error is", abs(true-res)/true*100, "%")
 
+res = betterInt(xa, xb, g, 50)
+print("MC w/ adaptive steps int of f from ", xa, " to ", xb, " is ", res, "for n = 50")
+print("\t error is", abs(true-res)/true*100, "%")
 
+res = betterInt(xa, xb, g, 75)
+print("MC w/ adaptive steps int of f from ", xa, " to ", xb, " is ", res, "for n = 75")
+print("\t error is", abs(true-res)/true*100, "%")
+
+res = betterInt(xa, xb, g, 100)
+print("MC w/ adaptive steps int of f from ", xa, " to ", xb, " is ", res, "for n = 100")
+print("\t error is", abs(true-res)/true*100, "%")
+
+res = betterInt(xa, xb, g, 150)
+print("MC w/ adaptive steps int of f from ", xa, " to ", xb, " is ", res, "for n = 150")
+print("\t error is", abs(true-res)/true*100, "%")
+
+print("End of program reached.")
+print("Goodbye.")
 
 
 
