@@ -1,11 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-import pandas as pd
 
-def g(x):   # g(x) = 2 x
+def g(x):   # g(x) = x^2 + 3x + 1
     return(x**2 + 3*x + 1)
-def G(x):   # 1/2*x^2
+def G(x):   # 1/3 x^3 + 3/2 x^2 + x
     return ((1/3)*x**3 + (3/2)*x**2 + x )
 
 def f(x):
@@ -100,25 +99,51 @@ x2 = 5
 y1 = f(x1)
 y2 = f(x2)
 
-#logical for development, if .true. then time-intensive code does not run
-saveTime = True
+# logical for development, if .true. then time-intensive code does not run
+saveTime = False
+# logical for development, if .true. extra code does run
+debug = False
 
-
-#plot function
-#xvals = np.linspace(x1, x2, 1000)
-#plt.plot(xvals,f(xvals))
-#plt.show()
+errors = []
+nvals = []
 
 true = F(1)-F(-1)
 print("int(f(x) from -1 to 1 is ", true)
 val = integrate(-1, 1, f, 100)
+nvals.append(100)
+errors.append(abs(true-val)/true*100)
 print("estimate for n = 100 is ", val )
-print("\t error is", abs(true-val)/true*100, "%")
+print("\t error is", abs(true-val)/true*100 , "%")
+
+
 val = integrate(-1,1, f, 1000)
+nvals.append(1000)
+errors.append(abs(true-val)/true*100)
 print("estimate for n = 1 000 is ", val)
 print("\t error is", abs(true-val)/true*100, "%")
 
-if saveTime == False:
+val = integrate(-1,1, f, 10000)
+nvals.append(10000)
+errors.append(abs(true-val)/true*100)
+print("estimate for n = 10 000 is ", val)
+print("\t error is", abs(true-val)/true*100, "%")
+
+val = integrate(-1,1, f, 100000)
+nvals.append(100000)
+errors.append(abs(true-val)/true*100)
+print("estimate for n = 100 000 is ", val)
+print("\t error is", abs(true-val)/true*100, "%")
+
+
+for i in range(0, len(errors)):
+    errors[i] = abs(errors[i])
+plt.subplot(2,1,1)
+plt.plot(nvals, errors)
+plt.xscale('log')
+plt.show()
+
+
+if debug == True:
     val1 = integrate(-1, 1, f, 1000000)
     print("1st estimate for n = 1 000 000 is ",  val1)
     print("\t error is", abs(true-val1)/true*100, "%")
@@ -138,6 +163,9 @@ print()
 print()
 true = F(4)-F(-2)
 print("int(f(x) from -2 to 4 is ", true)
+val = integrate(-2, 4, f, 100)
+print("estimate for n = 100 is ", val )
+print("\t error is", abs(true-val)/true*100, "%")
 val = integrate(-2, 4, f, 1000)
 print("estimate for n = 1 000 is ", val )
 print("\t error is", abs(true-val)/true*100, "%")
@@ -187,37 +215,44 @@ for i in range(0, len(vals)):
     
 print()  
 true = G(xb)-G(xa)
-print("analytic int of f from", xa, " to ", xb, " is ", true ) 
+print("analytic int of g from", xa, " to ", xb, " is ", true ) 
 res =   integrate(xa, xb, g, n*k)
-print("MC w/o steps int of f from ", xa, " to ", xb, " is ", res )
+print("MC w/o steps int of g from ", xa, " to ", xb, " is ", res )
 print("\t error is", abs(true-res)/true*100, "%")
 
 res = fixedStep
-print("MC w/ fixed steps int of f from ", xa, " to ", xb, " is ", res )
+print("MC w/ fixed steps int of g from ", xa, " to ", xb, " is ", res )
 print("\t error is", abs(true-res)/true*100, "%")
+
+# this takes several minutes to run on my home computer, output is included below
+#res =   integrate(xa, xb, g, 100000000)
+#print("MC w/o steps int of g from ", xa, " to ", xb, " is ", res )
+#print("\t error is", abs(true-res)/true*100, "%")
+
+# MC w/o steps int of g from  -2  to  4  is  47.993325821624225
+#         error is 0.013904538282849547 %
 
 print()
 
-res = betterInt(xa, xb, g, 10)
-print("MC w/ adaptive steps int of f from ", xa, " to ", xb, " is ", res, "for n = 10")
-print("\t error is", abs(true-res)/true*100, "%")
-
 res = betterInt(xa, xb, g, 50)
-print("MC w/ adaptive steps int of f from ", xa, " to ", xb, " is ", res, "for n = 50")
+print("MC w/ adaptive steps int of g from ", xa, " to ", xb, " is ", res, "for n = 50")
 print("\t error is", abs(true-res)/true*100, "%")
 
 res = betterInt(xa, xb, g, 75)
-print("MC w/ adaptive steps int of f from ", xa, " to ", xb, " is ", res, "for n = 75")
+print("MC w/ adaptive steps int of g from ", xa, " to ", xb, " is ", res, "for n = 75")
 print("\t error is", abs(true-res)/true*100, "%")
 
 res = betterInt(xa, xb, g, 100)
-print("MC w/ adaptive steps int of f from ", xa, " to ", xb, " is ", res, "for n = 100")
+print("MC w/ adaptive steps int of g from ", xa, " to ", xb, " is ", res, "for n = 100")
 print("\t error is", abs(true-res)/true*100, "%")
 
 res = betterInt(xa, xb, g, 150)
-print("MC w/ adaptive steps int of f from ", xa, " to ", xb, " is ", res, "for n = 150")
+print("MC w/ adaptive steps int of g from ", xa, " to ", xb, " is ", res, "for n = 150")
 print("\t error is", abs(true-res)/true*100, "%")
 
+
+print()
+print()
 print("End of program reached.")
 print("Goodbye.")
 
