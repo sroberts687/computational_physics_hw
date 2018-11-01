@@ -26,8 +26,19 @@ def Simp(f,x):
     simpSum = 0
     for i in range(0, len(x)-2):
         SimpSum += x[i] + 4*x[i+1] + x[i+2]
-     
-    return h/3*simpSum
+    
+    simpSum = h/3*simpSum
+    
+    smallx = []
+    smallx.append(x[0])
+    smallx.append(x[1])
+    simpSum += Trap(f,smallx)
+    
+    smallx[0] = x[len(x) - 1]
+    smallx[1] = x[len(x)]
+    simpSum += Trap(f,smallx)
+    
+    return simpSum
 
 
 def f(x):
