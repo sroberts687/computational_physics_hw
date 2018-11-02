@@ -24,8 +24,8 @@ def Simp(f,x):
     h = (x[len(x)-1] - x[0])/len(x)
     
     simpSum = 0
-    for i in range(0, len(x)-2):
-        SimpSum += x[i] + 4*x[i+1] + x[i+2]
+    for i in range(0, len(x)-3):
+        simpSum += x[i] + 4*x[i+1] + x[i+2]
     
     simpSum = h/3*simpSum
     
@@ -34,31 +34,56 @@ def Simp(f,x):
     smallx.append(x[1])
     simpSum += Trap(f,smallx)
     
-    smallx[0] = x[len(x) - 1]
-    smallx[1] = x[len(x)]
+    smallx[0] = x[len(x) - 2]
+    smallx[1] = x[len(x)-1]
     simpSum += Trap(f,smallx)
     
     return simpSum
 
 
-def f(x):
+def g(x):
     return x**2 + 2*x + 2
 
-def F(x): 
+def G(x): 
     return 1/3 * x**3 + x**2 + 2*x
+
+
+
 
 n = 1000
 x = np.linspace(-1, 1, n)
-xIntApx = Trap(f,x)
-xIntTrue = F(x[len(x)-1]) - F(x[0])
+xIntApx = Trap(g,x)
+xIntTrue = G(x[len(x)-1]) - G(x[0])
 
 print("approx int is ", xIntApx, " for n = ", n) 
 print("analytical int is ", xIntTrue)
 print("percent error is ", abs(xIntTrue - xIntApx)/xIntTrue * 100)
 
-xIntApx = Simp(f,x)
+xIntApx = Simp(g,x)
 
 print("approx int is ", xIntApx, " for n = ", n) 
 print("analytical int is ", xIntTrue)
 print("percent error is ", abs(xIntTrue - xIntApx)/xIntTrue * 100)
+
+
+print()
+print("Part 1b")
+print()
+
+
+for i in range(1, 10):
+    n = 100
+    x = linspace(-100, 100, n*i)
+    
+    print("approx int is ", xIntApx, " for n = ", n) 
+    print("analytical int is ", xIntTrue)
+    print("percent error is ", abs(xIntTrue - xIntApx)/xIntTrue * 100)
+    print()
+
+
+
+
+
+
+
 
