@@ -9,6 +9,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 #import scipy.interpolate
 
+#test git repo
+
 def Trap(f,x):
 
     h = (x[len(x)-1] - x[0])/len(x)
