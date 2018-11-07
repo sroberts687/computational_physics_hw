@@ -9,8 +9,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 #import scipy.interpolate
 
-#test git repo
-
 def Trap(f,x):
 
     h = (x[len(x)-1] - x[0])/len(x)
@@ -49,6 +47,8 @@ def g(x):
 def G(x): 
     return 1/3 * x**3 + x**2 + 2*x
 
+def f(x):
+    return 1/math.sqrt(2*math.pi)*math.e**((-1*(x-1)**2)/2)
 
 
 
@@ -73,14 +73,18 @@ print("Part 1b")
 print()
 
 
-for i in range(1, 10):
-    n = 100
-    x = linspace(-100, 100, n*i)
+#for i in range(1, 10):
+#    n = 10*i
+#    x = np.linspace(-100, 100, n)
+#    
+#    intApx = Trap(f, x)
+#    intTrue = 1.0
+#    
+#    print("approx int is ", xIntApx, " for n = ", n) 
+#    print("analytical int is ", xIntTrue)
+#    print("percent error is ", abs(xIntTrue - xIntApx)/xIntTrue * 100)
+#    print()
     
-    print("approx int is ", xIntApx, " for n = ", n) 
-    print("analytical int is ", xIntTrue)
-    print("percent error is ", abs(xIntTrue - xIntApx)/xIntTrue * 100)
-    print()
 
 
 
