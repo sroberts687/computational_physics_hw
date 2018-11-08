@@ -9,15 +9,37 @@ import numpy as np
 import matplotlib.pyplot as plt
 #import scipy.interpolate
 
-def Trap(f,x):
+def Trap(f,xmin, xmax):
+    
+    maxn = 1E4
+    thresh = 1E-5       # 1E-7 (can get 0.01 % error, but slow)
+    
+    
+    lastSum = 0
+    thisSum = 1
+    n = 1
+    
+    while abs(lastSum - thisSum) > thresh and n < maxn :
+        lastSum = thisSum
+        
+        x = np.linspace(xmin, xmax, n)
+    
+        h = (x[len(x)-1] - x[0])/len(x)
+    
+        trapSum = 0
+        for i in range(1, len(x)):
+            trapSum += f(x[i-1]) + f(x[i])
 
-    h = (x[len(x)-1] - x[0])/len(x)
+        trapSum = h/2*trapSum
+        
+        thisSum = trapSum
+            
+        n += 1
+        
+    print("n = ", n-1)
+        
+    return thisSum
 
-    trapSum = 0
-    for i in range(1, len(x)):
-        trapSum += f(x[i-1]) + f(x[i])
-
-    return h/2*trapSum
 
 def Simp(f,x):
     
@@ -32,11 +54,11 @@ def Simp(f,x):
     smallx = []
     smallx.append(x[0])
     smallx.append(x[1])
-    simpSum += Trap(f,smallx)
+    simpSum += Trap(f,smallx[0], smallx[len(smallx)-1])
     
     smallx[0] = x[len(x) - 2]
     smallx[1] = x[len(x)-1]
-    simpSum += Trap(f,smallx)
+    simpSum += Trap(f,smallx[0], smallx[1])
     
     return simpSum
 
@@ -52,15 +74,20 @@ def f(x):
 
 
 
+print("Trapezoid Rule Test")
+
 n = 1000
 x = np.linspace(-1, 1, n)
-xIntApx = Trap(g,x)
+
+xIntApx = Trap(g,-1, 1)
 xIntTrue = G(x[len(x)-1]) - G(x[0])
 
 print("approx int is ", xIntApx, " for n = ", n) 
 print("analytical int is ", xIntTrue)
 print("percent error is ", abs(xIntTrue - xIntApx)/xIntTrue * 100)
 
+print()
+print("Simpson's Rule Test")
 xIntApx = Simp(g,x)
 
 print("approx int is ", xIntApx, " for n = ", n) 
