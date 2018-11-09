@@ -36,29 +36,43 @@ def Trap(f,xmin, xmax):
             
         n += 1
         
-    print("n = ", n-1)
+    #print("n = ", n-1)
         
     return thisSum
 
-
-def Simp(f,x):
+def Simp(f,xmin, xmax):
     
-    h = (x[len(x)-1] - x[0])/len(x)
+    maxn = 1E4
+    thresh = 1E-5       # 1E-7 (can get 0.01 % error, but slow)
     
-    simpSum = 0
-    for i in range(0, len(x)-3):
-        simpSum += x[i] + 4*x[i+1] + x[i+2]
     
-    simpSum = h/3*simpSum
+    lastSum = 0
+    thisSum = 1
+    n = 3
     
-    smallx = []
-    smallx.append(x[0])
-    smallx.append(x[1])
-    simpSum += Trap(f,smallx[0], smallx[len(smallx)-1])
+    while abs(lastSum - thisSum) > thresh and n < maxn :
+        lastSum = thisSum
+        x = np.linspace(xmin, xmax, n)
+         
+        h = (x[len(x)-1] - x[0])/2*len(x)
     
-    smallx[0] = x[len(x) - 2]
-    smallx[1] = x[len(x)-1]
-    simpSum += Trap(f,smallx[0], smallx[1])
+        simpSum = 0
+        for i in range(0, len(x)-3):
+            simpSum += x[i] + 4*x[i+1] + x[i+2]
+        
+        simpSum = h/3*simpSum
+        
+        smallx = []
+        smallx.append(x[0])
+        smallx.append(x[1])
+        simpSum += Trap(f,smallx[0], smallx[len(smallx)-1])
+        
+        smallx[0] = x[len(x) - 2]
+        smallx[1] = x[len(x)-1]
+        simpSum += Trap(f,smallx[0], smallx[1])
+        
+        thisSum = simpSum
+        n += 1
     
     return simpSum
 
@@ -82,13 +96,13 @@ x = np.linspace(-1, 1, n)
 xIntApx = Trap(g,-1, 1)
 xIntTrue = G(x[len(x)-1]) - G(x[0])
 
-print("approx int is ", xIntApx, " for n = ", n) 
+print("approx int is ", xIntApx) 
 print("analytical int is ", xIntTrue)
 print("percent error is ", abs(xIntTrue - xIntApx)/xIntTrue * 100)
 
 print()
 print("Simpson's Rule Test")
-xIntApx = Simp(g,x)
+xIntApx = Simp(g,-1, 1)
 
 print("approx int is ", xIntApx, " for n = ", n) 
 print("analytical int is ", xIntTrue)
