@@ -131,13 +131,23 @@ def f(x):
     return 1/math.sqrt(2*math.pi)*math.e**((-1*(x-1)**2)/2)
 
 
-def euler():
-    count = 1
-    tau = 1.0 
-    thisInput = 1.0 
-    gdc = 1.0
-    dxdt = []
-    dxdt.append( -x[0]/tau + gdc/tau*thisInput )
+def Euler(n, x0, makePlots):
+
+    n = 50
+    t = np.linspace(0,1,n)      # want to solve ode on t = 0, 1
+    x = np.linspace(0,n,n)      # placeholders for output
+    x[0] = 1     # initial condition x(t=0) = 1
+    h = t[1] - t[0]
+    
+    for i in range(1, n):
+        deriv = dxdt(x[i-1], t[i-1])
+        x[i] = x[i-1] + h * deriv
+    
+    if makePlots:
+        plt.plot(t, x)
+        plt.plot(t,dxdt(x,t))
+        plt.plot(t, 19/16*math.e**(4*t)+0.25*t-3/16)
+        plt.show
     
     
 
@@ -201,10 +211,11 @@ print("Note that Simpson's rule takes much less time to converge than the Trapez
 print()
 print()
 
+plt.gcf().clear()
+
 print("Part 2")
 
-
-
+Euler(50, 1, True)
 
 
 
