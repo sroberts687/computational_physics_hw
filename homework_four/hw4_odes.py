@@ -9,15 +9,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 #import scipy.interpolate
 
-def Trap(f,xmin, xmax):
+def Trap(f,xmin, xmax, makePlots):
     
     maxn = 1E4
     thresh = 1E-5       # 1E-7 (can get 0.01 % error, but slow)
     
+    if makePlots:
+        ns = []
+        errs = []
+    
+    
     
     lastSum = 0
-    thisSum = 1
-    n = 1
+    thisSum = 1000
+    
+    # start at an even value -- otherwise fns symmetric about zero integrated 
+    # on x = -a to x = +a will integrate to zero (as will translations of such
+    # functions)
+    
+    n = 2       
     
     while abs(lastSum - thisSum) > thresh and n < maxn :
         lastSum = thisSum
@@ -34,47 +44,81 @@ def Trap(f,xmin, xmax):
         
         thisSum = trapSum
             
-        n += 1
+        if makePlots:
+            ns.append(n)
+            errs.append(abs(lastSum - thisSum))
+        
+        n += 5
         
     #print("n = ", n-1)
+    
+    if makePlots:
+        ns.pop(0)
+        errs.pop(0)
         
-    return thisSum
+        plt.plot(ns, errs)
+        plt.show
+    
+    
+    if (n-1 >= maxn):
+        print("maxn reached in Trap()")
+    
+    #print("n = ", n)
+    
+    return [thisSum, n-5]
 
-def Simp(f,xmin, xmax):
+def Simp(f,xmin, xmax, makePlots):
     
     maxn = 1E4
     thresh = 1E-5       # 1E-7 (can get 0.01 % error, but slow)
     
+        
+    if makePlots:
+        ns = []
+        errs = []
     
     lastSum = 0
     thisSum = 1
-    n = 3
+    n = 5
     
-    while abs(lastSum - thisSum) > thresh and n < maxn :
+    while abs(lastSum - thisSum) > thresh and n < maxn: #maxn :
         lastSum = thisSum
+        
+        h = (xmax - xmin)/n
         x = np.linspace(xmin, xmax, n)
-         
-        h = (x[len(x)-1] - x[0])/2*len(x)
+        
+        thisSum = 0        
+              
+        for i in range(0, len(x)):
+            if i%2 == 0:
+                thisSum += 2*f(x[i])
+            else:
+                thisSum += 4*f(x[i])
+
+        thisSum *= (h/3.0)
+
+        if makePlots:
+            ns.append(n)
+            errs.append(abs(lastSum - thisSum))
+
+        #print(n, "/t", thisSum)
+        
+        n += 4
     
-        simpSum = 0
-        for i in range(0, len(x)-3):
-            simpSum += x[i] + 4*x[i+1] + x[i+2]
         
-        simpSum = h/3*simpSum
+    if makePlots:
+        ns.pop(0)
+        errs.pop(0)
         
-        smallx = []
-        smallx.append(x[0])
-        smallx.append(x[1])
-        simpSum += Trap(f,smallx[0], smallx[len(smallx)-1])
-        
-        smallx[0] = x[len(x) - 2]
-        smallx[1] = x[len(x)-1]
-        simpSum += Trap(f,smallx[0], smallx[1])
-        
-        thisSum = simpSum
-        n += 1
+        plt.plot(ns, errs)
+        plt.show
     
-    return simpSum
+    if (n-1 >= maxn):
+        print("maxn reached in Simp()")
+    
+    #print("n = ", n)
+    
+    return [thisSum, n - 4]
 
 
 def g(x):
@@ -87,45 +131,81 @@ def f(x):
     return 1/math.sqrt(2*math.pi)*math.e**((-1*(x-1)**2)/2)
 
 
+def euler():
+    count = 1
+    tau = 1.0 
+    thisInput = 1.0 
+    gdc = 1.0
+    dxdt = []
+    dxdt.append( -x[0]/tau + gdc/tau*thisInput )
+    
+    
 
-print("Trapezoid Rule Test")
+def dxdt(x,t):
+    return 4*x - t + 1
+
+print("Part 1a")
+print("Calculate Int[x^2 + 2x + 2] from x = -1 to x = +1")
+print()
 
 n = 1000
 x = np.linspace(-1, 1, n)
-
-xIntApx = Trap(g,-1, 1)
 xIntTrue = G(x[len(x)-1]) - G(x[0])
 
-print("approx int is ", xIntApx) 
 print("analytical int is ", xIntTrue)
-print("percent error is ", abs(xIntTrue - xIntApx)/xIntTrue * 100)
+
+ary = Trap(g, -1 , 1, False)
+xIntApx = ary[0]
+thisN = ary[1]
+print("approx int using the Trap rule is ", xIntApx) 
+print("converged for n = ", thisN)
+print("percent error is ", abs(xIntTrue - xIntApx)/xIntTrue * 100, "%")
 
 print()
-print("Simpson's Rule Test")
-xIntApx = Simp(g,-1, 1)
 
-print("approx int is ", xIntApx, " for n = ", n) 
-print("analytical int is ", xIntTrue)
-print("percent error is ", abs(xIntTrue - xIntApx)/xIntTrue * 100)
-
+print("Simp convered with ")
+ary = Simp(g,-1, 1, False)
+xIntApx = ary[0]
+thisN = ary[1]
+print("approx int using Simp's rule is ", xIntApx) 
+print("converged for n = ", thisN)
+print("percent error is ", abs(xIntTrue - xIntApx)/xIntTrue * 100, "%")
 
 print()
 print("Part 1b")
 print()
 
+print("analytical int is 1.0")
+xIntTrue = 1.0
 
-#for i in range(1, 10):
-#    n = 10*i
-#    x = np.linspace(-100, 100, n)
-#    
-#    intApx = Trap(f, x)
-#    intTrue = 1.0
-#    
-#    print("approx int is ", xIntApx, " for n = ", n) 
-#    print("analytical int is ", xIntTrue)
-#    print("percent error is ", abs(xIntTrue - xIntApx)/xIntTrue * 100)
-#    print()
-    
+
+ary = Trap(f, -100 , 100, True)
+xIntApx = ary[0]
+thisN = ary[1]
+print("approx int using the Trap rule is ", xIntApx) 
+print("converged for n = ", thisN)
+print("percent error is ", abs(xIntTrue - xIntApx)/xIntTrue * 100, "%")
+
+print()
+
+print("Simp convered with ")
+ary = Simp(f,-100, 100, True)
+xIntApx = ary[0]
+thisN = ary[1]
+print("approx int using Simp's rule is ", xIntApx) 
+print("converged for n = ", thisN)
+print("percent error is ", abs(xIntTrue - xIntApx)/xIntTrue * 100, "%")
+
+print()
+print("Note that Simpson's rule takes much less time to converge than the Trapezoidal rule.")
+print()
+print()
+
+print("Part 2")
+
+
+
+
 
 
 
