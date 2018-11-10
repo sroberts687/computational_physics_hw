@@ -144,7 +144,7 @@ def Euler(n, x0, makePlots):
         x[i] = x[i-1] + h * deriv
     
     if makePlots:
-        plt.plot(t, x)
+#        plt.plot(t, x)
         plt.plot(t,dxdt(x,t))
         plt.plot(t, 19/16*math.e**(4*t)+0.25*t-3/16)
         plt.show
@@ -216,6 +216,27 @@ plt.gcf().clear()
 print("Part 2")
 
 Euler(50, 1, True)
+
+n = 50
+t = np.linspace(0,1,n+1)      # want to solve ode on t = 0, 1
+x = np.linspace(0,n,n+1)      # placeholders for output
+x[0] = 1     # initial condition x(t=0) = 1
+h = t[1] - t[0]
+
+kvals = [0,0,0,0,0]
+
+for i in range(0, n):
+	
+	kvals[1] = dxdt(t[i], x[i])
+	kvals[2] = dxdt(t[i] + h / 2, x[i] + h / 2 * kvals[1])
+	kvals[3] = dxdt(t[i] + h / 2, x[i] + h / 2 * kvals[2])
+	kvals[4] = dxdt(t[i] + h, x[i] + h * kvals[3])
+	
+	if (i < n):
+		x[i+1] = x[i] + h / 6 * (kvals[1] + 2*kvals[2] + 2*kvals[3] + kvals[4])
+		#t[i+1] = t[i] + h
+	
+plt.plot(t, x)	
 
 
 
