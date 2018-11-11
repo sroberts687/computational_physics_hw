@@ -146,13 +146,16 @@ def Euler(n, x0, makePlots):
     if makePlots:
 #        plt.plot(t, x)
         plt.plot(t,dxdt(x,t))
-        plt.plot(t, 19/16*math.e**(4*t)+0.25*t-3/16)
+        plt.plot(t, soln(t))
         plt.show
-    
-    
 
 def dxdt(x,t):
     return 4*x - t + 1
+
+def soln(t):
+    e = math.e
+    return 1/16*(4*t+19*e**(4*t)-3)    
+
 
 print("Part 1a")
 print("Calculate Int[x^2 + 2x + 2] from x = -1 to x = +1")
@@ -225,16 +228,18 @@ h = t[1] - t[0]
 
 kvals = [0,0,0,0,0]
 
-for i in range(0, n):
+for i in range(1, n+1):
 	
-	kvals[1] = dxdt(t[i], x[i])
-	kvals[2] = dxdt(t[i] + h / 2, x[i] + h / 2 * kvals[1])
-	kvals[3] = dxdt(t[i] + h / 2, x[i] + h / 2 * kvals[2])
-	kvals[4] = dxdt(t[i] + h, x[i] + h * kvals[3])
-	
-	if (i < n):
-		x[i+1] = x[i] + h / 6 * (kvals[1] + 2*kvals[2] + 2*kvals[3] + kvals[4])
-		#t[i+1] = t[i] + h
+    kvals[1] = h * dxdt(x[i-1], t[i-1])
+    kvals[2] = h * dxdt(x[i-1] + h / 2.0, t[i-1] + kvals[1] / 2.0)
+    kvals[3] = h * dxdt(x[i-1] + h / 2.0, t[i-1] + kvals[2] / 2.0)
+    kvals[4] = h * dxdt(x[i-1] + h, t[i-1] + kvals[3])
+    	
+    #print(kvals[1], " ", kvals[2], " ", kvals[3], " ", kvals[4])
+
+    if (i < n+1):
+        x[i] = x[i-1] + (kvals[1] + 2.0 * (kvals[2] + kvals[3]) + kvals[4] ) / 6.0
+        t[i] = t[i-1] + h
 	
 plt.plot(t, x)	
 
