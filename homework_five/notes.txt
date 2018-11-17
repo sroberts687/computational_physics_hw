@@ -1,0 +1,18 @@
+Based on lecture 19, want to set
+  p_m = 1, v_m = 1
+
+numerical solutions on slide 29/31 
+  are we meant to just be coding these?
+  
+FTCS:
+p^(n+1)_i = p^n_i - /tau /(2*h)(F^n_{i+1}-F^n_{i-1}
+  F(p) = p(x,t)*v(p(x,t))
+  F^n_i = F(p^n_i)
+Lax:
+  p^{n+1}_i = 1/2 * (p^n_{i+1} + p^n_{i-1}) - /tau / (2*h)*(F^n_{i+1} - F^n_{i-1})
+  
+Lax-Wendroff:
+  p^{n+1}_i = p^n_i - /tau / (2h) *(F^n_{i+1} - F^n_{i-1}) + 
+      /tau ^2 / (2*h) * (c_{i + 1/2} * (F^n_{i+1} - F^n_{i})/h - c_{i - 1/2} * (F^n_{i} - F^n_{i-1})/h)
+  c_{i /pm 1/2} = c(p^n_{i /pm 1/2}
+  p^n_{i /pm 1/2} = (p^n_{i /pm 1} + p^n_i) / 2
